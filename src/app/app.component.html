@@ -1,0 +1,74 @@
+<!-- Barra de navegación con Tailwind CSS -->
+<nav class="bg-primary-700 shadow-lg">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="flex justify-between">
+      <div class="flex space-x-7">
+        <div>
+          <!-- Logo -->
+          <a href="#" class="flex items-center py-4 px-2">
+            <span class="font-semibold text-white text-lg">XpertCats!!!</span>
+          </a>
+        </div>
+        <!-- Enlaces de navegación principal -->
+        <div class="hidden md:flex items-center space-x-1">
+          <a routerLink="/lista" routerLinkActive="bg-primary-800" 
+             class="py-4 px-2 text-white font-semibold hover:text-white hover:bg-primary-600 transition duration-300">
+            Explorador
+          </a>
+          <a routerLink="/tabla" routerLinkActive="bg-primary-800" 
+             class="py-4 px-2 text-white font-semibold hover:text-white hover:bg-primary-600 transition duration-300">
+            Tabla
+          </a>
+        </div>
+      </div>
+      <!-- Botones de autenticación -->
+      <div class="hidden md:flex items-center space-x-3">
+        <!-- Usuario logueado -->
+        <div *ngIf="isLoggedIn; else loginButtons" class="flex items-center space-x-4">
+          <span class="text-white">Hola, {{ userName }}</span>
+          <button (click)="logout($event)"
+                 class="py-2 px-4 bg-red-500 text-white rounded hover:bg-red-600 transition duration-300">
+            Cerrar Sesión
+          </button>
+        </div>
+        <!-- Usuario no logueado -->
+        <ng-template #loginButtons>
+          <a routerLink="/login" class="py-2 px-4 bg-white text-primary-700 rounded hover:bg-gray-200 transition duration-300">
+            Iniciar Sesión
+          </a>
+          <a routerLink="/register" class="py-2 px-4 bg-primary-500 text-white rounded hover:bg-primary-600 transition duration-300">
+            Registrarse
+          </a>
+        </ng-template>
+      </div>
+      <!-- Botón de menú móvil -->
+      <div class="md:hidden flex items-center">
+        <button class="outline-none" (click)="showMobileMenu = !showMobileMenu">
+          <svg class="w-6 h-6 text-white" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+            <path d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- Menú móvil -->
+  <div class="md:hidden" [ngClass]="{'hidden': !showMobileMenu}">
+    <a routerLink="/lista" routerLinkActive="bg-primary-800" class="block py-2 px-4 text-sm hover:bg-primary-600 text-white">Explorador</a>
+    <a routerLink="/tabla" routerLinkActive="bg-primary-800" class="block py-2 px-4 text-sm hover:bg-primary-600 text-white">Tabla</a>
+    <div *ngIf="isLoggedIn; else mobileLoginButtons">
+      <div class="py-2 px-4 flex justify-between items-center bg-primary-600">
+        <span class="text-sm text-white">{{ userName }}</span>
+        <button (click)="logout($event)" class="py-1 px-2 bg-red-500 text-white text-xs rounded">Cerrar Sesión</button>
+      </div>
+    </div>
+    <ng-template #mobileLoginButtons>
+      <a routerLink="/login" class="block py-2 px-4 text-sm hover:bg-primary-600 text-white">Iniciar Sesión</a>
+      <a routerLink="/register" class="block py-2 px-4 text-sm hover:bg-primary-600 text-white">Registrarse</a>
+    </ng-template>
+  </div>
+</nav>
+
+<!-- Contenido principal -->
+<div class="container mx-auto p-4">
+  <router-outlet></router-outlet>
+</div>

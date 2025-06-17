@@ -1,0 +1,186 @@
+<div class="max-w-6xl mx-auto px-4 py-6">
+  <h2 class="text-3xl font-bold text-gray-800 mb-6">Explorador de Razas de Gatos</h2>
+
+  <div class="bg-white rounded-lg shadow-lg p-6">
+    <div class="mb-6">
+      <label for="breedSelect" class="block text-sm font-medium text-gray-700 mb-2">Selecciona una raza:</label>
+      <select 
+        id="breedSelect" 
+        class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-primary-500 focus:border-primary-500"
+        (change)="onSelectBreed($event)"
+        [disabled]="loading">
+        <option value="">-- Selecciona una raza --</option>
+        <option *ngFor="let breed of breeds" [value]="breed.id">{{ breed.name }}</option>
+      </select>
+    </div>
+
+    <!-- Indicador de carga -->
+    <div *ngIf="loading" class="py-10 flex justify-center">
+      <div class="animate-spin rounded-full h-12 w-12 border-4 border-primary-400 border-t-transparent"></div>
+    </div>
+
+    <!-- Detalles de la raza seleccionada -->
+    <div *ngIf="selectedBreed && !loading" class="bg-gray-50 rounded-lg p-6 mt-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Carrusel de imágenes -->
+        <div class="relative h-64 md:h-80 rounded-lg overflow-hidden shadow-lg">
+          <div *ngIf="breedImages.length > 0" class="h-full w-full">
+            <img [src]="breedImages[currentImageIndex].url" class="w-full h-full object-cover" alt="{{ selectedBreed.name }}">
+            
+            <div class="absolute bottom-0 left-0 right-0 flex justify-between p-3 bg-gradient-to-t from-black/50 to-transparent">
+              <button 
+                (click)="prevImage()"
+                class="bg-white/80 hover:bg-white p-2 rounded-full shadow-md transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <span class="bg-black/70 text-white px-3 py-1 rounded-full text-xs">
+                {{ currentImageIndex + 1 }} / {{ breedImages.length }}
+              </span>
+              <button 
+                (click)="nextImage()"
+                class="bg-white/80 hover:bg-white p-2 rounded-full shadow-md transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Mensaje cuando no hay imágenes -->
+          <div *ngIf="breedImages.length === 0" class="flex items-center justify-center h-full bg-gray-100">
+            <p class="text-gray-500">No hay imágenes disponibles para esta raza.</p>
+          </div>
+        </div>
+        
+        <!-- Información de la raza -->
+        <div>
+          <h3 class="text-2xl font-bold text-gray-800 mb-2">{{ selectedBreed.name }}</h3>
+          <p class="text-gray-600 mb-4">{{ selectedBreed.description || 'No hay descripción disponible.' }}</p>
+          
+          <div class="space-y-3 mb-6">
+            <div class="flex justify-between border-b border-gray-200 pb-2">
+              <span class="font-medium text-gray-600">Origen:</span>
+              <span class="text-gray-800">{{ selectedBreed.origin || 'Desconocido' }}</span>
+            </div>
+            <div class="flex justify-between border-b border-gray-200 pb-2">
+              <span class="font-medium text-gray-600">Temperamento:</span>
+              <span class="text-gray-800">{{ selectedBreed.temperament || 'No especificado' }}</span>
+            </div>
+            <div class="flex justify-between border-b border-gray-200 pb-2">
+              <span class="font-medium text-gray-600">Esperanza de vida:</span>
+              <span class="text-gray-800">{{ selectedBreed.life_span || 'No especificado' }} años</span>
+            </div>
+          </div>
+          
+          <!-- Características con estrellas -->
+          <div class="space-y-4 mt-6">
+            <h4 class="font-semibold text-gray-700 mb-3">Características</h4>
+            
+            <!-- Adaptabilidad -->
+            <div *ngIf="selectedBreed.adaptability" class="flex justify-between items-center">
+              <span class="text-sm text-gray-600">Adaptabilidad:</span>
+              <div class="flex">
+                <ng-container *ngFor="let i of [1,2,3,4,5]">
+                  <svg *ngIf="i <= selectedBreed.adaptability" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                  <svg *ngIf="i > selectedBreed.adaptability" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-300" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                </ng-container>
+              </div>
+            </div>
+            
+            <!-- Nivel de afecto -->
+            <div *ngIf="selectedBreed.affection_level" class="flex justify-between items-center">
+              <span class="text-sm text-gray-600">Nivel de afecto:</span>
+              <div class="flex">
+                <ng-container *ngFor="let i of [1,2,3,4,5]">
+                  <svg *ngIf="i <= selectedBreed.affection_level" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                  <svg *ngIf="i > selectedBreed.affection_level" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-300" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                </ng-container>
+              </div>
+            </div>
+            
+            <!-- Amigable con niños -->
+            <div *ngIf="selectedBreed.child_friendly" class="flex justify-between items-center">
+              <span class="text-sm text-gray-600">Amigable con niños:</span>
+              <div class="flex">
+                <ng-container *ngFor="let i of [1,2,3,4,5]">
+                  <svg *ngIf="i <= selectedBreed.child_friendly" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                  <svg *ngIf="i > selectedBreed.child_friendly" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-300" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                </ng-container>
+              </div>
+            </div>
+            
+            <!-- Amigable con perros -->
+            <div *ngIf="selectedBreed.dog_friendly" class="flex justify-between items-center">
+              <span class="text-sm text-gray-600">Amigable con perros:</span>
+              <div class="flex">
+                <ng-container *ngFor="let i of [1,2,3,4,5]">
+                  <svg *ngIf="i <= selectedBreed.dog_friendly" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                  <svg *ngIf="i > selectedBreed.dog_friendly" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-300" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                </ng-container>
+              </div>
+            </div>
+            
+            <!-- Nivel de energía -->
+            <div *ngIf="selectedBreed.energy_level" class="flex justify-between items-center">
+              <span class="text-sm text-gray-600">Nivel de energía:</span>
+              <div class="flex">
+                <ng-container *ngFor="let i of [1,2,3,4,5]">
+                  <svg *ngIf="i <= selectedBreed.energy_level" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                  <svg *ngIf="i > selectedBreed.energy_level" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-300" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mensaje cuando no hay raza seleccionada -->
+    <div *ngIf="!selectedBreed && !loading" class="bg-blue-50 border-l-4 border-blue-400 p-4 mt-4 rounded">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <p class="text-sm text-blue-700">
+            Selecciona una raza de gato para ver su información detallada.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botón para ver todas las razas -->
+  <div class="mt-6 flex justify-end">
+    <a routerLink="/tabla" class="inline-flex items-center px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+      </svg>
+      Ver todas las razas en tabla
+    </a>
+  </div>
+</div>
